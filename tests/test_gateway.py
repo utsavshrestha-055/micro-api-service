@@ -57,6 +57,14 @@ def test_production_tls_does_not_require_client_certificates() -> None:
     assert not settings.grpc_client_key
 
 
+def test_cors_origins_accept_comma_separated_environment_format() -> None:
+    settings = Settings(cors_origins="https://store.example.com,https://admin.example.com")
+    assert settings.cors_origins == [
+        "https://store.example.com",
+        "https://admin.example.com",
+    ]
+
+
 def test_registration_reports_unimplemented_private_provisioning() -> None:
     app = create_app(Settings())
     app.state.auth_service = AuthService(cast(AuthClient, None), 5, None, None)

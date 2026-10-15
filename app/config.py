@@ -1,9 +1,10 @@
 """Environment-backed service configuration."""
 
 from functools import lru_cache
+from typing import Annotated
 
 from pydantic import Field, field_validator, model_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -18,7 +19,9 @@ class Settings(BaseSettings):
     grpc_ca_cert: str | None = None
     grpc_client_cert: str | None = None
     grpc_client_key: str | None = None
-    cors_origins: list[str] = Field(default_factory=lambda: ["http://localhost:3000"])
+    cors_origins: Annotated[list[str], NoDecode] = Field(
+        default_factory=lambda: ["http://localhost:3000"]
+    )
     max_request_bytes: int = Field(default=1_048_576, gt=0)
     docs_enabled: bool = True
 
