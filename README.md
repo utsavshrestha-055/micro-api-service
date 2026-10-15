@@ -16,6 +16,8 @@ make run
 
 The gateway listens on port 8000. Liveness is `GET /health/live`; dependency readiness is `GET /health/ready`. Development API documentation is at `/docs`. Production disables docs and requires gRPC TLS.
 
+See [HostMe.md](HostMe.md) for local platform setup and Linux production hosting steps.
+
 When an upstream proto changes, update only its pinned copy after reviewing the upstream contract, then run:
 
 ```sh
