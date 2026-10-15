@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package auth;
+
+service AuthenticationService {
+    rpc HealthCheck(HealthCheckRequest)
+        returns (HealthCheckResponse);
+    rpc Register(RegisterRequest) returns (AuthResponse);
+    rpc Login(LoginRequest) returns (AuthResponse);
+    rpc GetUser(GetUserRequest) returns (UserResponse);
+    rpc ListUsers(ListUsersRequest) returns (UserListResponse);
+    rpc UpdateUser(UpdateUserRequest) returns (UserResponse);
+    rpc DeleteUser(DeleteUserRequest) returns (OperationResponse);
+    rpc Logout(AccessTokenRequest) returns (OperationResponse);
+}
+
+service AuthorizationService {
+    rpc AssignRole(AssignRoleRequest) returns (OperationResponse);
+    rpc UnassignRole(UnassignRoleRequest) returns (OperationResponse);
+    rpc CheckPermission(CheckPermissionRequest) returns (PermissionResponse);
+    rpc CreateRole(CreateRoleRequest) returns (RoleResponse);
+    rpc ListRoles(AccessTokenRequest) returns (RoleListResponse);
+    rpc UpdateRole(UpdateRoleRequest) returns (RoleResponse);
+    rpc DeleteRole(DeleteRoleRequest) returns (OperationResponse);
+    rpc CreatePermission(CreatePermissionRequest) returns (PermissionInfoResponse);
+    rpc ListPermissions(AccessTokenRequest) returns (PermissionListResponse);
+    rpc UpdatePermission(UpdatePermissionRequest) returns (PermissionInfoResponse);
+    rpc DeletePermission(DeletePermissionRequest) returns (OperationResponse);
+    rpc GrantPermissionToRole(RolePermissionRequest) returns (OperationResponse);
+    rpc RevokePermissionFromRole(RolePermissionRequest) returns (OperationResponse);
+    rpc ListRolePermissions(ListRolePermissionsRequest) returns (PermissionListResponse);
+    rpc ListUserRoles(ListUserRolesRequest) returns (StringListResponse);
+}
+
+message HealthCheckRequest {}
+
+message HealthCheckResponse {
+    string status = 1;
+}
+
+message RegisterRequest { string email = 1; string password = 2; string first_name = 3; string last_name = 4; }
+message LoginRequest { string email = 1; string password = 2; }
+message AuthResponse { string access_token = 1; User user = 2; }
+message GetUserRequest { string access_token = 1; string user_id = 2; }
+message UserResponse { User user = 1; }
+message User { string id = 1; string email = 2; string first_name = 3; string last_name = 4; bool is_active = 5; string created_at = 6; }
+message AssignRoleRequest { string access_token = 1; string user_id = 2; string role = 3; }
+message OperationResponse { bool success = 1; }
+message CheckPermissionRequest { string access_token = 1; string permission = 2; }
+message PermissionResponse { bool allowed = 1; }
+message AccessTokenRequest { string access_token = 1; }
+message UnassignRoleRequest { string access_token = 1; string user_id = 2; string role = 3; }
+message ListUsersRequest { string access_token = 1; int64 limit = 2; int64 offset = 3; }
+message UserListResponse { repeated User users = 1; }
+message UpdateUserRequest { string access_token = 1; string user_id = 2; string email = 3; string first_name = 4; string last_name = 5; bool is_active = 6; string password = 7; }
+message DeleteUserRequest { string access_token = 1; string user_id = 2; }
+message Role { string id = 1; string name = 2; string description = 3; bool is_active = 4; string created_at = 5; }
+message CreateRoleRequest { string access_token = 1; string name = 2; string description = 3; }
+message RoleResponse { Role role = 1; }
+message RoleListResponse { repeated Role roles = 1; }
+message UpdateRoleRequest { string access_token = 1; string role_id = 2; string name = 3; string description = 4; bool is_active = 5; }
+message DeleteRoleRequest { string access_token = 1; string role_id = 2; }
+message Permission { string id = 1; string name = 2; string description = 3; }
+message CreatePermissionRequest { string access_token = 1; string name = 2; string description = 3; }
+message PermissionInfoResponse { Permission permission = 1; }
+message PermissionListResponse { repeated Permission permissions = 1; }
+message UpdatePermissionRequest { string access_token = 1; string permission_id = 2; string name = 3; string description = 4; }
+message DeletePermissionRequest { string access_token = 1; string permission_id = 2; }
+message RolePermissionRequest { string access_token = 1; string role_id = 2; string permission_id = 3; }
+message ListRolePermissionsRequest { string access_token = 1; string role_id = 2; }
+message ListUserRolesRequest { string access_token = 1; string user_id = 2; }
+message StringListResponse { repeated string values = 1; }
