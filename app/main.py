@@ -50,7 +50,7 @@ class _RequestIdInterceptor(grpc.aio.UnaryUnaryClientInterceptor):
     ) -> Any:
         metadata = list(client_call_details.metadata or ())
         metadata.append(("x-request-id", request_id_context.get()))
-        details = _ClientCallDetails(
+        details = grpc.aio.ClientCallDetails(
             client_call_details.method,
             client_call_details.timeout,
             metadata,
@@ -77,24 +77,6 @@ class _RequestIdInterceptor(grpc.aio.UnaryUnaryClientInterceptor):
             (time.monotonic() - started) * 1000,
         )
         return response
-
-
-class _ClientCallDetails(
-    grpc.aio.ClientCallDetails,
-):
-    def __init__(
-        self,
-        method: str,
-        timeout: float | None,
-        metadata: Any,
-        credentials: grpc.CallCredentials | None,
-        wait_for_ready: bool | None,
-    ) -> None:
-        self.method = method
-        self.timeout = timeout
-        self.metadata = metadata
-        self.credentials = credentials
-        self.wait_for_ready = wait_for_ready
 
 
 class _RequestBodyLimit:
