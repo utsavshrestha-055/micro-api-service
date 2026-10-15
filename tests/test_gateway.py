@@ -131,13 +131,27 @@ def test_identity_route_reports_missing_capability() -> None:
     assert response.status_code == 501
 
 
-def test_category_permission_is_checked_before_downstream_call() -> None:
+def test_catalog_read_routes_are_public() -> None:
     app = create_app(Settings())
-    permissions = add_permission_service(app, allowed=False)
-    response = TestClient(app).get("/api/v1/categories", headers={"Authorization": "Bearer opaque"})
-    assert response.status_code == 403
-    assert permissions.last_request.permission == "categories.read"
-    assert permissions.last_request.access_token == "opaque"
+
+    class Catalog:
+        async def list_categories(self, _query: Any) -> dict[str, Any]:
+            return {"data": {"categories": []}}
+
+        async def list_products(self, _query: Any) -> dict[str, Any]:
+            return {"data": {"products": []}}
+
+        async def get_product(self, product_id: str) -> dict[str, Any]:
+            return {"data": {"product": {"id": product_id}}}
+
+    app.state.catalog_service = Catalog()
+    client = TestClient(app)
+    responses = [
+        client.get("/api/v1/categories"),
+        client.get("/api/v1/products"),
+        client.get("/api/v1/products/product-1"),
+    ]
+    assert [response.status_code for response in responses] == [200, 200, 200]
 
 
 def test_customer_order_route_stops_at_missing_identity_port() -> None:

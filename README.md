@@ -1,6 +1,6 @@
 # Commerce API Gateway
 
-FastAPI gateway for storefront JSON/HTTP requests. It owns no users, permissions, catalog data, orders, or database state. It checks every protected storefront permission through `AuthorizationService.CheckPermission` before making a catalog or order RPC.
+FastAPI gateway for storefront JSON/HTTP requests. It owns no users, permissions, catalog data, orders, or database state. Category and product browsing are public; protected order routes check storefront permissions through `AuthorizationService.CheckPermission` before making an order RPC.
 
 ## Local setup
 
@@ -39,15 +39,15 @@ All application routes are under `/api/v1`. Successful responses use `{ "data": 
 | `POST /auth/logout` | Valid session | `AuthenticationService.Logout` |
 | `POST /auth/register` | Public | Private admin provisioning port; currently 501 |
 | `GET /auth/me` | Valid session | Token identity port; currently 501 |
-| `GET /categories` | `categories.read` | `CategoryService.ListCategories` |
-| `GET /products` | `products.read` | `ProductService.ListProducts` |
-| `GET /products/{product_id}` | `products.read` | `ProductService.GetProductPage` |
+| `GET /categories` | Public | `CategoryService.ListCategories` |
+| `GET /products` | Public | `ProductService.ListProducts` |
+| `GET /products/{product_id}` | Public | `ProductService.GetProductPage` |
 | `POST /orders` | `orders.create` | `OrderService.CreateOrder` |
 | `GET /orders` | `orders.read` | `OrderService.ListOrders` |
 | `GET /orders/{order_id}` | `orders.read` | `OrderService.GetOrder` |
 | `POST /orders/{order_id}/cancel` | `orders.cancel` | `OrderService.CancelOrder` |
 
-Catalog, product, order and logout endpoints require `Authorization: Bearer <token>`. Checkout accepts product IDs, quantities, a shipping address and `Idempotency-Key`; it never accepts user IDs, prices or totals. The order service calculates prices and totals. Only customer-scoped order RPCs are wired; admin order RPCs are not exposed.
+Category and product browsing are public. Orders and logout require `Authorization: Bearer <token>`. Checkout accepts product IDs, quantities, a shipping address and `Idempotency-Key`; it never accepts user IDs, prices or totals. The order service calculates prices and totals. Only customer-scoped order RPCs are wired; admin order RPCs are not exposed.
 
 ## Open items and blockers
 

@@ -4,7 +4,6 @@ from typing import cast
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Request
 
-from app.api.dependencies import Session, permission_dependency
 from app.schemas.catalog import ProductQuery
 from app.services.catalog import CatalogService
 
@@ -15,7 +14,6 @@ router = APIRouter(prefix="/products", tags=["products"])
 async def list_products(
     request: Request,
     query: ProductQuery = Depends(),
-    session: Session = Depends(permission_dependency("products.read")),
 ) -> dict[str, object]:
     if query.min_price_minor is not None and query.max_price_minor is not None:
         if query.min_price_minor > query.max_price_minor:
@@ -27,6 +25,5 @@ async def list_products(
 async def get_product(
     request: Request,
     product_id: str = Path(..., min_length=1, max_length=128),
-    session: Session = Depends(permission_dependency("products.read")),
 ) -> dict[str, object]:
     return await cast(CatalogService, request.app.state.catalog_service).get_product(product_id)
