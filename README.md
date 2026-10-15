@@ -25,7 +25,7 @@ make generate
 make verify
 ```
 
-`AUTH_GRPC_TARGET` and `COMMERCE_GRPC_TARGET` use the service targets configured for admin-service (local defaults `localhost:50052` and `localhost:50062`). TLS can use a CA and an optional client certificate/key pair. The gateway uses a deadline for every RPC. Request IDs are forwarded as gRPC metadata and included with route/RPC duration and status logs; credentials, passwords, and shipping-address content are not logged.
+`AUTH_GRPC_TARGET` and `PRODUCT_GRPC_TARGET` use the service targets configured for admin-service (local defaults `localhost:50052` and `localhost:50062`). TLS can use a CA and an optional client certificate/key pair. The gateway uses a deadline for every RPC. Request IDs are forwarded as gRPC metadata and included with route/RPC duration and status logs; credentials, passwords, and shipping-address content are not logged.
 
 Configure `CORS_ORIGINS` as a comma-separated allowlist. Request body size is capped by `MAX_REQUEST_BYTES`; deployments should also enforce an ingress body limit. Login, registration, and checkout need ingress rate limits. gRPC endpoints should remain private.
 
@@ -56,6 +56,7 @@ Catalog, product, order and logout endpoints require `Authorization: Bearer <tok
 - Admin-service permission/role seeding and operator account-creation changes are outside this folder and were not modified.
 - Frontend mocks and types are outside this folder and were not modified.
 - Production ingress rate limits, private service networking, and deployed TLS certificate provisioning must be configured by deployment infrastructure.
+- The checked-in auth and product gRPC servers currently start without TLS configuration. Enable server-side TLS on both services before running this gateway in production, where `GRPC_TLS=true` is required.
 - Product profile fields such as ratings, review counts, colors and customer addresses have no persistence API in the scanned contracts; this gateway does not claim to persist them.
 
 ## Decisions

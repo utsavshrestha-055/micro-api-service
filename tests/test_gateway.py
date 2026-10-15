@@ -43,6 +43,20 @@ def test_liveness_is_independent_of_downstreams() -> None:
     assert response.headers.get("x-request-id")
 
 
+def test_production_tls_does_not_require_client_certificates() -> None:
+    settings = Settings(
+        app_env="production",
+        grpc_tls=True,
+        grpc_ca_cert="",
+        grpc_client_cert="",
+        grpc_client_key="",
+    )
+    assert settings.grpc_tls
+    assert not settings.grpc_ca_cert
+    assert not settings.grpc_client_cert
+    assert not settings.grpc_client_key
+
+
 def test_registration_reports_unimplemented_private_provisioning() -> None:
     app = create_app(Settings())
     app.state.auth_service = AuthService(cast(AuthClient, None), 5, None, None)

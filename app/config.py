@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     app_env: str = "development"
     log_level: str = "INFO"
     auth_grpc_target: str = "localhost:50052"
-    commerce_grpc_target: str = "localhost:50062"
+    product_grpc_target: str = "localhost:50062"
     grpc_deadline_seconds: float = Field(default=5.0, gt=0, le=60)
     grpc_tls: bool = False
     grpc_ca_cert: str | None = None

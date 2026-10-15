@@ -154,12 +154,12 @@ def create_app(
     @asynccontextmanager
     async def lifespan(application: FastAPI) -> AsyncIterator[None]:
         auth_channel = _channel(active_settings.auth_grpc_target, active_settings)
-        commerce_channel = _channel(active_settings.commerce_grpc_target, active_settings)
+        product_channel = _channel(active_settings.product_grpc_target, active_settings)
         application.state.auth_channel = auth_channel
-        application.state.commerce_channel = commerce_channel
+        application.state.product_channel = product_channel
         auth_client = AuthClient(auth_channel)
-        catalog_client = CatalogClient(commerce_channel)
-        order_client = OrderClient(commerce_channel)
+        catalog_client = CatalogClient(product_channel)
+        order_client = OrderClient(product_channel)
         application.state.auth_service = AuthService(
             auth_client,
             active_settings.grpc_deadline_seconds,
@@ -176,7 +176,7 @@ def create_app(
             yield
         finally:
             await auth_channel.close()
-            await commerce_channel.close()
+            await product_channel.close()
 
     docs = active_settings.docs_enabled and active_settings.app_env != "production"
     application = FastAPI(
@@ -241,14 +241,14 @@ def create_app(
     @application.get("/health/ready", tags=["health"], response_model=None)
     async def readiness(request: Request) -> Any:
         auth_channel = getattr(request.app.state, "auth_channel", None)
-        commerce_channel = getattr(request.app.state, "commerce_channel", None)
-        if auth_channel is None or commerce_channel is None:
+        product_channel = getattr(request.app.state, "product_channel", None)
+        if auth_channel is None or product_channel is None:
             return JSONResponse(status_code=503, content={"detail": "Dependencies unavailable"})
         auth_channel.get_state(try_to_connect=True)
-        commerce_channel.get_state(try_to_connect=True)
+        product_channel.get_state(try_to_connect=True)
         if (
             auth_channel.get_state() != grpc.ChannelConnectivity.READY
-            or commerce_channel.get_state() != grpc.ChannelConnectivity.READY
+            or product_channel.get_state() != grpc.ChannelConnectivity.READY
         ):
             return JSONResponse(status_code=503, content={"detail": "Dependencies unavailable"})
         return {"status": "ok"}
