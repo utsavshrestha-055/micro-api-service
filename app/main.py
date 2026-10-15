@@ -154,7 +154,7 @@ def create_app(
     @asynccontextmanager
     async def lifespan(application: FastAPI) -> AsyncIterator[None]:
         auth_channel = _channel(active_settings.auth_grpc_target, active_settings)
-        product_channel = _channel(active_settings.product_grpc_target, active_settings)
+        product_channel = _channel(active_settings.commerce_grpc_target, active_settings)
         application.state.auth_channel = auth_channel
         application.state.product_channel = product_channel
         auth_client = AuthClient(auth_channel)

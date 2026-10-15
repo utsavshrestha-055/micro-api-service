@@ -25,7 +25,7 @@ make generate
 make verify
 ```
 
-`AUTH_GRPC_TARGET` and `PRODUCT_GRPC_TARGET` use the service targets configured for admin-service (local defaults `localhost:50052` and `localhost:50062`). TLS can use a CA and an optional client certificate/key pair. The gateway uses a deadline for every RPC. Request IDs are forwarded as gRPC metadata and included with route/RPC duration and status logs; credentials, passwords, and shipping-address content are not logged.
+`AUTH_GRPC_TARGET` and `COMMERCE_GRPC_TARGET` use the service targets configured for admin-service (local defaults `localhost:50052` and `localhost:50062`). TLS can use a CA and an optional client certificate/key pair. The gateway uses a deadline for every RPC. Request IDs are forwarded as gRPC metadata and included with route/RPC duration and status logs; credentials, passwords, and shipping-address content are not logged.
 
 Configure `CORS_ORIGINS` as a comma-separated allowlist. Request body size is capped by `MAX_REQUEST_BYTES`; deployments should also enforce an ingress body limit. Login, registration, and checkout need ingress rate limits. gRPC endpoints should remain private.
 

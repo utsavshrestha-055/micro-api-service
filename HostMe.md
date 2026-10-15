@@ -24,7 +24,7 @@ make verify
 make run
 ```
 
-The service listens on `http://localhost:8000`. The sample environment uses local plaintext gRPC targets. Change `AUTH_GRPC_TARGET` and `PRODUCT_GRPC_TARGET` to reachable service endpoints. For local browser work, set `CORS_ORIGINS` to the exact storefront origin, such as `http://localhost:3000`.
+The service listens on `http://localhost:8000`. The sample environment uses local plaintext gRPC targets. Change `AUTH_GRPC_TARGET` and `COMMERCE_GRPC_TARGET` to reachable service endpoints. For local browser work, set `CORS_ORIGINS` to the exact storefront origin, such as `http://localhost:3000`.
 
 On Windows PowerShell, use the platform-specific virtual-environment commands:
 
@@ -59,7 +59,7 @@ Store runtime settings in a host-managed environment file, for example `/etc/mic
 APP_ENV=production
 LOG_LEVEL=INFO
 AUTH_GRPC_TARGET=auth.internal.example:50052
-PRODUCT_GRPC_TARGET=product.internal.example:50062
+COMMERCE_GRPC_TARGET=product.internal.example:50062
 GRPC_DEADLINE_SECONDS=5
 GRPC_TLS=true
 GRPC_CA_CERT=
@@ -74,7 +74,7 @@ Use the private DNS names and ports for your deployment. An empty `GRPC_CA_CERT`
 
 The empty certificate settings do not turn off TLS. `GRPC_TLS=true` still requires the auth and product services to accept TLS. If those services currently expose plaintext gRPC only, TLS calls will fail; use plaintext only for local development until server-side TLS is configured. Production plaintext is rejected by the gateway configuration.
 
-The environment variable names mirror the host/timeout/TLS pattern used by admin-service (`AUTH_GRPC_HOST`, `COMMERCE_GRPC_HOST`, and corresponding TLS settings); this gateway uses `AUTH_GRPC_TARGET`, `PRODUCT_GRPC_TARGET`, one shared deadline, and shared certificate settings for its two channels.
+The environment variable names mirror the host/timeout/TLS pattern used by admin-service (`AUTH_GRPC_HOST`, `COMMERCE_GRPC_HOST`, and corresponding TLS settings); this gateway uses `AUTH_GRPC_TARGET`, `COMMERCE_GRPC_TARGET`, one shared deadline, and shared certificate settings for its two channels.
 
 The current checked-in auth and product gRPC servers call Tonic `serve` without server TLS configuration and expose no TLS certificate settings. The production environment above describes the required end state; it will not connect to those current plaintext listeners. Configure and deploy TLS on both gRPC servers first. Do not set `APP_ENV=development` or disable TLS to make a production deployment appear ready.
 
